@@ -8,7 +8,6 @@ export const getAllVideos = async () => {
 
 export const getVideoById = async (videoId: number) => {
   const video = videosData.find(item => item.id === videoId);
-  if (!video) return false;
 
   return video;
 };
