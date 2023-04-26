@@ -52,7 +52,7 @@ export const getVideoByIdController = async (
 
 export const postVideoController = async (
   req: TypeRequestBody<CreateVideoInputModel>,
-  res: Response<VideoViewOutputModel | { errorMessage: IErrorsMessages[] }>
+  res: Response<VideoViewOutputModel | { errorsMessages: IErrorsMessages[] }>
 ) => {
   const { author, availableResolutions, title } = req.body;
 
@@ -61,7 +61,9 @@ export const postVideoController = async (
   postVideoValidation(errorsMessages, req.body);
 
   if (errorsMessages.length > 0) {
-    res.status(STATUS_CODE.BAD_REQUEST).json({ errorMessage: errorsMessages });
+    res
+      .status(STATUS_CODE.BAD_REQUEST)
+      .json({ errorsMessages: errorsMessages });
     return;
   }
 
@@ -90,14 +92,16 @@ export const postVideoController = async (
 
 export const updateVideoController = async (
   req: TypeRequestParamsAndBody<{ id: string }, UpdateVideoInputModel>,
-  res: Response<{ errorMessage: IErrorsMessages[] }>
+  res: Response<{ errorsMessages: IErrorsMessages[] }>
 ) => {
   errorsMessages.splice(0);
 
   updateVideoValidation(errorsMessages, req.body);
 
   if (errorsMessages.length > 0) {
-    res.status(STATUS_CODE.BAD_REQUEST).json({ errorMessage: errorsMessages });
+    res
+      .status(STATUS_CODE.BAD_REQUEST)
+      .json({ errorsMessages: errorsMessages });
     return;
   }
 
