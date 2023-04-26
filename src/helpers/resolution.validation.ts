@@ -6,11 +6,15 @@ const errorMessage =
 export const resolutionValidation = (resolution: string[]) => {
   if (!resolution || !resolution.length) return errorMessage;
 
-  const value = Object.values(AvailableResolutions);
-  let result;
-  if (resolution) {
-    result = resolution.every((i, idx) => i.includes(value[idx]));
-    console.log(result, 'result of values');
+  const value = Object.values(AvailableResolutions) as string[];
+
+  let result = true;
+
+  for (const element of value) {
+    if (!resolution.includes(element)) {
+      result = false;
+      return;
+    }
   }
 
   return !result ? errorMessage : null;
