@@ -67,7 +67,7 @@ export const postVideoController = async (
 
   const date = new Date();
   const dateAddOneDay = new Date(
-    date.setDate(date.getDate() + 1)
+    new Date().setDate(date.getDate() + 1)
   ).toISOString();
 
   const newVideo: IVideo = {
