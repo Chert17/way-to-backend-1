@@ -7,6 +7,7 @@ import {
   postBlogController,
   updateBlogController,
 } from '../controllers/blogs.controller';
+
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { blogRequestBodySchema } from '../validation/blog.request.body.schema';
 import { validateRequestMiddleware } from '../middlewares/validateRequestMiddleware';

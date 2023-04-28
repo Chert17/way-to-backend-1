@@ -1,10 +1,14 @@
 import express, { Request, Response } from 'express';
 import { videoRouter } from './routes/video.routes';
+
 import { STATUS_CODE } from './utils/status.code';
+
 import { videosData } from './utils/videos.data';
 import { blogsData } from './utils/blogs.data';
 import { postsData } from './utils/posts.data';
+
 import { blogRouter } from './routes/blog.routes';
+import { postRouter } from './routes/post.routes';
 
 export const app = express();
 
@@ -19,7 +23,7 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 
 app.use('/videos', videoRouter);
 app.use('/blogs', blogRouter);
-// app.use('/posts');
+app.use('/posts', postRouter);
 
 app.use((req: Request, res: Response) => {
   res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Not found' });

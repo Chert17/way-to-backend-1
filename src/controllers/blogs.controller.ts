@@ -21,7 +21,7 @@ export const getAllBlogsController = async (
   res: Response<BlogViewModel[]>
 ) => {
   const blogs = await getAllBlogs();
-  res.status(STATUS_CODE.OK).json(blogs);
+  return res.status(STATUS_CODE.OK).json(blogs);
 };
 
 export const getBlogByIdController = async (
