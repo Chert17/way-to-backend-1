@@ -22,7 +22,7 @@ export const validateRequestMiddleware = (
   if (!errors.isEmpty()) {
     res
       .status(STATUS_CODE.BAD_REQUEST)
-      .json({ errorMessages: errors.array({ onlyFirstError: true }) });
+      .json({ errorsMessages: errors.array({ onlyFirstError: true }) });
     return;
   }
 
