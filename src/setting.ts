@@ -18,7 +18,7 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
   videosData.splice(0);
   blogsData.splice(0);
   postsData.splice(0);
-  res.sendStatus(STATUS_CODE.NOT_CONTENT);
+  return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 });
 
 app.use('/videos', videoRouter);
@@ -26,5 +26,5 @@ app.use('/blogs', blogRouter);
 app.use('/posts', postRouter);
 
 app.use((req: Request, res: Response) => {
-  res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Not found' });
+  return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Not found' });
 });

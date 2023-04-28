@@ -14,7 +14,7 @@ export const validateRequestMiddleware = (
 
   const ErrorFormatter = ({ msg, path }: any) => ({
     message: msg,
-    fiaeld: path,
+    field: path,
   });
 
   const errors = validationResult(req).formatWith(ErrorFormatter);
