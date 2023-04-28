@@ -4,6 +4,7 @@ import { getBlogById } from '../service/blogs.service';
 export const postRequestBodySchema = [
   body('title')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .withMessage('Field must be a string')
@@ -12,6 +13,7 @@ export const postRequestBodySchema = [
 
   body('shortDescription')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .withMessage('Field must be a string')
@@ -20,6 +22,7 @@ export const postRequestBodySchema = [
 
   body('content')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .withMessage('Field must be a string')

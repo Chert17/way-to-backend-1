@@ -3,6 +3,7 @@ import { body } from 'express-validator';
 export const blogRequestBodySchema = [
   body('websiteUrl')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .matches('^https://([a-zA-Z0-9_-]+.)+[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*/?$')
@@ -12,6 +13,7 @@ export const blogRequestBodySchema = [
 
   body('name')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .withMessage('Field must be a string')
@@ -20,6 +22,7 @@ export const blogRequestBodySchema = [
 
   body('description')
     .exists({ values: 'falsy' })
+    .trim()
     .withMessage('Field is required')
     .isString()
     .withMessage('Field must be a string')
