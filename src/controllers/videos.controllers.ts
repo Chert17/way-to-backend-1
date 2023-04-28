@@ -117,7 +117,7 @@ export const updateVideoController = async (
 
 export const deleteVideoController = async (
   req: TypeRequestParams<{ id: string }>,
-  res: Response<VideoViewOutputModel>
+  res: Response
 ) => {
   const video = await deleteVideo(+req.params.id);
 

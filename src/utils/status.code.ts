@@ -3,5 +3,6 @@ export const enum STATUS_CODE {
   CREATED = 201,
   NOT_CONTENT = 204,
   BAD_REQUEST = 400,
+  Unauthorized = 401,
   NOT_FOUND = 404,
 }
