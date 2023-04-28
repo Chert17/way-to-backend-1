@@ -1,6 +1,15 @@
 import { body } from 'express-validator';
 
 export const blogRequestBodySchema = [
+  body('websiteUrl')
+    .exists({ values: 'falsy' })
+    .withMessage('Field is required')
+    .isString()
+    .matches('^https://([a-zA-Z0-9_-]+.)+[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*/?$')
+    .withMessage('Incorrect url')
+    .isLength({ max: 100 })
+    .withMessage('Field must be no more than 100 characters'),
+
   body('name')
     .exists({ values: 'falsy' })
     .withMessage('Field is required')
@@ -16,13 +25,4 @@ export const blogRequestBodySchema = [
     .withMessage('Field must be a string')
     .isLength({ max: 500 })
     .withMessage('Field must be no more than 500 characters'),
-
-  body('websiteUrl')
-    .exists({ values: 'falsy' })
-    .withMessage('Field is required')
-    .isString()
-    .matches('^https://([a-zA-Z0-9_-]+.)+[a-zA-Z0-9_-]+(/[a-zA-Z0-9_-]+)*/?$')
-    .withMessage('Incorrect url')
-    .isLength({ max: 100 })
-    .withMessage('Field must be no more than 100 characters'),
 ];
