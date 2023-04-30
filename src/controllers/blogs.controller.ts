@@ -14,7 +14,7 @@ import {
   TypeRequestParams,
   TypeRequestParamsAndBody,
 } from '../types/req-res.types';
-import { IBlog } from '../types/blog.interface';
+import { IBlogDb } from '../db/db.types';
 
 export const getAllBlogsController = async (
   req: Request,
@@ -41,16 +41,19 @@ export const postBlogController = async (
 ) => {
   const { name, description, websiteUrl } = req.body;
 
-  const newBlog: IBlog = {
-    id: Date.now().toString(),
+  const newBlog: IBlogDb = {
     name,
     description,
     websiteUrl,
+    createdAt: new Date().toISOString(),
+    isMembership: false,
   };
 
   const blog = await createBlog(newBlog);
 
-  res.status(STATUS_CODE.CREATED).json(blog);
+  if (!blog) return res.status(STATUS_CODE.BAD_REQUEST);
+
+  return res.status(STATUS_CODE.CREATED).json(blog);
 };
 
 export const updateBlogController = async (

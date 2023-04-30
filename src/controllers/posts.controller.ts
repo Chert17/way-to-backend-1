@@ -60,6 +60,7 @@ export const postPostController = async (
     shortDescription,
     title,
     blogName: blog.name,
+    createdAt: new Date().toISOString(),
   };
 
   const post = await createPost(newPost);

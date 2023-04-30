@@ -8,5 +8,6 @@ export const postsData: IPost[] = [
     content: 'string',
     blogId: 'string',
     blogName: 'string',
+    createdAt: 'string',
   },
 ];
