@@ -1,5 +1,3 @@
-import { ObjectId } from 'mongodb';
-
 export interface IBlogDb {
   // _id: ObjectId;
   name: string;

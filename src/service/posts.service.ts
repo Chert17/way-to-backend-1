@@ -1,44 +1,77 @@
-import { PostInputModel } from '../models/posts.models';
+import { ObjectId } from 'mongodb';
+import { postsDbCollection } from '../db/db.collections';
+import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { IPost } from '../types/post.interface';
-import { postsData } from '../utils/posts.data';
 
-export const getAllPosts = async () => {
-  return postsData;
+export const getAllPosts = async (): Promise<PostViewModel[]> => {
+  const posts = await postsDbCollection.find().toArray();
+
+  return posts.map(post => ({
+    id: post._id.toString(),
+    title: post.title,
+    shortDescription: post.shortDescription,
+    content: post.content,
+    blogId: post.blogId,
+    blogName: post.blogName,
+    createdAt: post.createdAt,
+  }));
 };
 
-export const getPostById = async (id: string) => {
-  const post = postsData.find(item => item.id === id);
+export const getPostById = async (
+  id: string
+): Promise<PostViewModel | null> => {
+  const post = await postsDbCollection.findOne({ _id: new ObjectId(id) });
 
-  if (!post) return false;
+  if (!post) return null;
 
-  return post;
+  return {
+    id: post._id.toString(),
+    title: post.title,
+    shortDescription: post.shortDescription,
+    content: post.content,
+    blogId: post.blogId,
+    blogName: post.blogName,
+    createdAt: post.createdAt,
+  };
 };
 
-export const createPost = async (post: IPost) => {
-  postsData.unshift(post);
-  return post;
+export const createPost = async (
+  post: IPost
+): Promise<PostViewModel | null> => {
+  const result = await postsDbCollection.insertOne(post);
+
+  if (!result.acknowledged) return null;
+
+  return {
+    id: result.insertedId.toString(),
+    title: post.title,
+    shortDescription: post.shortDescription,
+    content: post.content,
+    blogId: post.blogId,
+    blogName: post.blogName,
+    createdAt: post.createdAt,
+  };
 };
 
-export const updatePost = async (id: string, body: PostInputModel) => {
+export const updatePost = async (
+  id: string,
+  body: PostInputModel
+): Promise<boolean> => {
   const { blogId, content, shortDescription, title } = body;
 
-  const post = postsData.find(item => item.id === id);
+  const post = await postsDbCollection.findOneAndUpdate(
+    { _id: new ObjectId(id) },
+    { $set: { blogId, content, shortDescription, title } },
+    { returnDocument: 'after' }
+  );
 
-  if (!post) return false;
-
-  post.blogId = blogId;
-  post.content = content;
-  post.shortDescription = shortDescription;
-  post.title = title;
-
-  return post;
+  return !!post.value;
 };
 
-export const deletePost = async (id: string) => {
-  const idx = postsData.findIndex(item => item.id === id);
-  if (idx === -1) return false;
+export const deletePost = async (id: string): Promise<boolean> => {
+  const post = await postsDbCollection.findOneAndDelete({
+    _id: new ObjectId(id),
+  });
 
-  postsData.splice(idx, 1);
-
-  return true;
+  return !!post.value;
 };

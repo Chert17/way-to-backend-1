@@ -65,6 +65,8 @@ export const postPostController = async (
 
   const post = await createPost(newPost);
 
+  if (!post) return res.status(STATUS_CODE.BAD_REQUEST);
+
   return res.status(STATUS_CODE.CREATED).json(post);
 };
 

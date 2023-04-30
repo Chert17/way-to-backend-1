@@ -7,7 +7,7 @@ export const getAllBlogs = async (): Promise<BlogViewModel[]> => {
   const blogs = await blogsDbCollection.find().toArray();
 
   return blogs.map(blog => ({
-    id: blog._id,
+    id: blog._id.toString(),
     name: blog.name,
     description: blog.description,
     websiteUrl: blog.websiteUrl,
@@ -24,7 +24,7 @@ export const getBlogById = async (
   if (!blog) return null;
 
   return {
-    id: blog._id,
+    id: blog._id.toString(),
     name: blog.name,
     description: blog.description,
     websiteUrl: blog.websiteUrl,
@@ -41,7 +41,7 @@ export const createBlog = async (
   if (!result.acknowledged) return null;
 
   return {
-    id: result.insertedId,
+    id: result.insertedId.toString(),
     name: blog.name,
     description: blog.description,
     websiteUrl: blog.websiteUrl,
@@ -53,18 +53,22 @@ export const createBlog = async (
 export const updateBlog = async (
   id: string,
   body: BlogInputModel
-): Promise<true | null> => {
+): Promise<boolean> => {
   const { name, description, websiteUrl } = body;
 
-  return !!(await blogsDbCollection.findOneAndUpdate(
+  const blog = await blogsDbCollection.findOneAndUpdate(
     { _id: new ObjectId(id) },
     { $set: { name, description, websiteUrl } },
     { returnDocument: 'after' }
-  ));
+  );
+
+  return !!blog.value;
 };
 
-export const deleteBlog = async (id: string): Promise<true | null> => {
-  return !!(await blogsDbCollection.findOneAndDelete({
+export const deleteBlog = async (id: string): Promise<boolean> => {
+  const blog = await blogsDbCollection.findOneAndDelete({
     _id: new ObjectId(id),
-  }));
+  });
+
+  return !!blog.value;
 };
