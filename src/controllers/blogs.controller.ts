@@ -87,11 +87,14 @@ export const createPostByBlogIdController = async (
   >,
   res: Response<PostViewModel>
 ) => {
-  const { blogId } = req.params;
   const { content, shortDescription, title } = req.body;
 
+  const blogId = await blogQueryRepo.getBlogById(req.params.blogId);
+
+  if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
   const postId = await postService.createPost({
-    blogId,
+    blogId: blogId.id,
     content,
     shortDescription,
     title,

@@ -1,7 +1,6 @@
 import { body } from 'express-validator';
-import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
 
-export const postRequestBodySchema = [
+export const requestPostBodyByOneBlogIdSchema = [
   body('title')
     .exists({ values: 'falsy' })
     .trim()
@@ -31,10 +30,4 @@ export const postRequestBodySchema = [
     .withMessage('Field must be a string')
     .isLength({ max: 1000 })
     .withMessage('Field must be no more than 1000 characters'),
-
-  body('blogId').custom(async (id: string) => {
-    const blog = await blogQueryRepo.getBlogById(id);
-
-    if (!blog) throw new Error('Blog with given id not found');
-  }),
 ];

@@ -11,9 +11,9 @@ import {
 } from '../controllers/blogs.controller';
 
 import { authMiddleware } from '../middlewares/authMiddleware';
-import { blogRequestBodySchema } from '../validation/blog.request.body.schema';
+import { blogRequestBodySchema } from '../validation/blogs/blog.request.body.schema';
 import { validateRequestMiddleware } from '../middlewares/validateRequestMiddleware';
-import { postRequestBodySchema } from '../validation/posts.request.body.schema';
+import { requestPostBodyByOneBlogIdSchema } from '../validation/blogs/request.body.by.one.blog.validation';
 
 export const blogRouter = express.Router();
 
@@ -33,7 +33,7 @@ blogRouter.post(
 blogRouter.post(
   '/:blogId/posts',
   authMiddleware,
-  postRequestBodySchema,
+  requestPostBodyByOneBlogIdSchema,
   createPostByBlogIdController
 );
 
