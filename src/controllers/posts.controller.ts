@@ -15,7 +15,7 @@ import {
   TypeRequestParamsAndBody,
 } from '../types/req-res.types';
 import { IPost } from '../types/post.interface';
-import { getBlogById } from '../service/blogs.service';
+import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
 
 export const getAllPostsController = async (
   req: Request,
@@ -43,13 +43,9 @@ export const postPostController = async (
 ) => {
   const { blogId, content, shortDescription, title } = req.body;
 
-  //!
-  //TODO: спросить за последовательность ,   можно ли обьеденить в один if !blogId & !blog ?
-  //!
-
   if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
-  const blog = await getBlogById(blogId);
+  const blog = await blogQueryRepo.getBlogById(blogId);
 
   if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
@@ -64,7 +60,8 @@ export const postPostController = async (
   };
 
   const post = await createPost(newPost);
-
+  //const postId = await service.createPost()
+  //const post = queryRepo.getPostById(postId)
   if (!post) return res.status(STATUS_CODE.BAD_REQUEST);
 
   return res.status(STATUS_CODE.CREATED).json(post);

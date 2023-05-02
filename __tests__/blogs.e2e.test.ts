@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { app } from '../src/setting';
 import { STATUS_CODE } from '../src/utils/status.code';
-import { IBlog } from '../src/types/blog.interface';
 import { ObjectId } from 'bson';
+import { BlogViewModel } from '../src/models/blogs.models';
 
 const BLOG_URL = '/blogs/';
 
@@ -18,7 +18,7 @@ const validBlogPostData = {
 };
 
 describe('blogs', () => {
-  let createdBlog: IBlog;
+  let createdBlog: BlogViewModel;
 
   beforeAll(async () => {
     await request(app)

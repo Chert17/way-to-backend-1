@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { getBlogById } from '../service/blogs.service';
+import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
 
 export const postRequestBodySchema = [
   body('title')
@@ -33,7 +33,7 @@ export const postRequestBodySchema = [
     .withMessage('Field must be no more than 1000 characters'),
 
   body('blogId').custom(async (id: string) => {
-    const blog = await getBlogById(id);
+    const blog = await blogQueryRepo.getBlogById(id);
 
     if (!blog) throw new Error('Blog with given id not found');
   }),

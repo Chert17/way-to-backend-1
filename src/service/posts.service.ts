@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { postsDbCollection } from '../db/db.collections';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
-import { IPost } from '../types/post.interface';
+import { IPostDb } from '../db/db.types';
 
 export const getAllPosts = async (): Promise<PostViewModel[]> => {
   const posts = await postsDbCollection.find().toArray();
@@ -36,10 +36,11 @@ export const getPostById = async (
 };
 
 export const createPost = async (
-  post: IPost
+  post: IPostDb
 ): Promise<PostViewModel | null> => {
   const result = await postsDbCollection.insertOne(post);
-
+  //const createdId = repository.createPost()
+  //return createdId
   if (!result.acknowledged) return null;
 
   return {

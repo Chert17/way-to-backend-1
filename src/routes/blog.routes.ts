@@ -17,6 +17,8 @@ export const blogRouter = express.Router();
 blogRouter.get('/', getAllBlogsController);
 blogRouter.get('/:id', getBlogByIdController);
 
+blogRouter.get('/:blogId/posts');
+
 blogRouter.post(
   '/',
   authMiddleware,
@@ -24,6 +26,14 @@ blogRouter.post(
   validateRequestMiddleware,
   postBlogController
 );
+
+//TODO
+// blogRouter.post(
+//   '/:blogId/posts',
+//   authMiddleware,
+//   postRequestBodySchema,
+//   postPostByBlogIdController
+// );
 
 blogRouter.put(
   '/:id',
