@@ -14,7 +14,7 @@ import { IWithPagination } from '../types/pagination.interface';
 
 export const getAllBlogsController = async (
   req: Request,
-  res: Response<IWithPagination<BlogViewModel>[]>
+  res: Response<IWithPagination<BlogViewModel>>
 ) => {
   const blogs = await blogQueryRepo.getAllBlogs();
   return res.status(STATUS_CODE.OK).json(blogs);
@@ -37,7 +37,15 @@ export const postBlogController = async (
 ) => {
   const { name, description, websiteUrl } = req.body;
 
-  const blog = await blogService.createBlog({ name, description, websiteUrl });
+  const blogId = await blogService.createBlog({
+    name,
+    description,
+    websiteUrl,
+  });
+
+  if (!blogId) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+
+  const blog = await blogQueryRepo.getBlogById(blogId.toString());
 
   if (!blog) return res.status(STATUS_CODE.BAD_REQUEST);
 
@@ -76,9 +84,11 @@ export const updateBlogController = async (
   req: TypeRequestParamsAndBody<{ id: string }, BlogInputModel>,
   res: Response
 ) => {
-  const blog = await blogService.updateBlog(req.params.id, req.body);
+  const blogId = await blogQueryRepo.getBlogById(req.params.id);
 
-  if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  await blogService.updateBlog(req.params.id, req.body);
 
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 };
@@ -87,9 +97,11 @@ export const deleteBlogController = async (
   req: TypeRequestParams<{ id: string }>,
   res: Response
 ) => {
-  const blog = await blogService.deleteBlog(req.params.id);
+  const blogId = await blogQueryRepo.getBlogById(req.params.id);
 
-  if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  await blogService.deleteBlog(req.params.id);
 
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 };

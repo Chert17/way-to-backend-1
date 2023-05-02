@@ -1,5 +1,7 @@
+import { ObjectId } from 'mongodb';
+
 import { IBlogDb } from '../db/db.types';
-import { BlogInputModel, BlogViewModel } from '../models/blogs.models';
+import { BlogInputModel } from '../models/blogs.models';
 import { blogRepo } from '../repositories/blogs/blog.repo';
 
 export const blogService = {
@@ -7,7 +9,7 @@ export const blogService = {
     name,
     description,
     websiteUrl,
-  }: BlogInputModel): Promise<BlogViewModel | null> => {
+  }: BlogInputModel): Promise<ObjectId | null> => {
     const newBlog: IBlogDb = {
       name,
       description,

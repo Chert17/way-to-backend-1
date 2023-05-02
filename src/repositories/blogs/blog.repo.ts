@@ -5,19 +5,12 @@ import { IBlogDb } from '../../db/db.types';
 import { BlogInputModel, BlogViewModel } from '../../models/blogs.models';
 
 export const blogRepo = {
-  createBlog: async (blog: IBlogDb): Promise<BlogViewModel | null> => {
+  createBlog: async (blog: IBlogDb): Promise<ObjectId | null> => {
     const result = await blogsDbCollection.insertOne(blog);
 
     if (!result.acknowledged) return null;
 
-    return {
-      id: result.insertedId.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-      isMembership: blog.isMembership,
-    };
+    return result.insertedId;
   },
 
   updateBlog: async (

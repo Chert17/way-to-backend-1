@@ -1,12 +1,6 @@
 import { Request, Response } from 'express';
 
-import {
-  createPost,
-  deletePost,
-  getAllPosts,
-  getPostById,
-  updatePost,
-} from '../service/posts.service';
+import { postService } from '../service/posts.service';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { STATUS_CODE } from '../utils/status.code';
 import {
@@ -14,14 +8,15 @@ import {
   TypeRequestParams,
   TypeRequestParamsAndBody,
 } from '../types/req-res.types';
-import { IPost } from '../types/post.interface';
-import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
+
+import { postQueryRepo } from '../repositories/posts/post.query.repo';
+import { IWithPagination } from '../types/pagination.interface';
 
 export const getAllPostsController = async (
   req: Request,
-  res: Response<PostViewModel[]>
+  res: Response<IWithPagination<PostViewModel>>
 ) => {
-  const posts = await getAllPosts();
+  const posts = await postQueryRepo.getAllPosts();
 
   return res.status(STATUS_CODE.OK).json(posts);
 };
@@ -30,7 +25,7 @@ export const getPostByIdController = async (
   req: TypeRequestParams<{ id: string }>,
   res: Response<PostViewModel>
 ) => {
-  const post = await getPostById(req.params.id);
+  const post = await postQueryRepo.getPostById(req.params.id);
 
   if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
@@ -45,23 +40,17 @@ export const postPostController = async (
 
   if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
-  const blog = await blogQueryRepo.getBlogById(blogId);
-
-  if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
-
-  const newPost: IPost = {
-    id: Date.now().toString(),
+  const postId = await postService.createPost({
     blogId,
     content,
     shortDescription,
     title,
-    blogName: blog.name,
-    createdAt: new Date().toISOString(),
-  };
+  });
 
-  const post = await createPost(newPost);
-  //const postId = await service.createPost()
-  //const post = queryRepo.getPostById(postId)
+  if (!postId) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+
+  const post = await postQueryRepo.getPostById(postId.toString());
+
   if (!post) return res.status(STATUS_CODE.BAD_REQUEST);
 
   return res.status(STATUS_CODE.CREATED).json(post);
@@ -71,9 +60,11 @@ export const updatePostController = async (
   req: TypeRequestParamsAndBody<{ id: string }, PostInputModel>,
   res: Response
 ) => {
-  const post = await updatePost(req.params.id, req.body);
+  const postId = await postQueryRepo.getPostById(req.params.id);
 
-  if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  await postService.updatePost(postId.id, req.body);
 
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 };
@@ -82,9 +73,11 @@ export const deletePostController = async (
   req: TypeRequestParams<{ id: string }>,
   res: Response
 ) => {
-  const post = await deletePost(req.params.id);
+  const postId = await postQueryRepo.getPostById(req.params.id);
 
-  if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!postId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  await postService.deletePost(postId.id);
 
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 };
