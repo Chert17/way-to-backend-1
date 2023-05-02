@@ -34,6 +34,7 @@ blogRouter.post(
   '/:blogId/posts',
   authMiddleware,
   requestPostBodyByOneBlogIdSchema,
+  validateRequestMiddleware,
   createPostByBlogIdController
 );
 
