@@ -4,18 +4,13 @@ import { postsDbCollection } from '../../db/db.collections';
 import { PostViewModel } from '../../models/posts.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToPostValidFormat } from '../../helpers/converterToValidFormatData/converter.post';
+import { TypeValidQueryParams } from '../../types/req-res.types';
 
 export const postQueryRepo = {
-  getAllPosts: async (): Promise<IWithPagination<PostViewModel>> => {
-    const posts = await postsDbCollection.find().toArray();
-
-    return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: posts.map(post => converterToPostValidFormat(post)),
-    };
+  async getAllPosts(
+    filter: TypeValidQueryParams
+  ): Promise<IWithPagination<PostViewModel>> {
+    return this._getPosts({ ...filter, condition: '' });
   },
 
   getPostById: async (id: string): Promise<PostViewModel | null> => {
@@ -26,17 +21,37 @@ export const postQueryRepo = {
     return converterToPostValidFormat(post);
   },
 
-  getAllPostsByOneBlog: async (
-    blogId: string
+  async getAllPostsByOneBlog(
+    blogId: string,
+    filter: TypeValidQueryParams
+  ): Promise<IWithPagination<PostViewModel>> {
+    return await this._getPosts({ ...filter, condition: blogId });
+  },
+
+  _getPosts: async (
+    filter: TypeValidQueryParams
   ): Promise<IWithPagination<PostViewModel>> => {
-    const posts = await postsDbCollection.find({ blogId: blogId }).toArray();
+    const { condition, page, pageSize, sortBy, sortDirection } = filter;
+
+    const find = condition
+      ? { blogId: { $regex: condition, $options: 'i' } }
+      : {};
+
+    const posts = await postsDbCollection
+      .find(find)
+      .sort(sortBy, sortDirection)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await postsDbCollection.countDocuments(find);
 
     return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: posts.map(post => converterToPostValidFormat(post)),
+      pagesCount: Math.ceil(totalCount / pageSize),
+      pageSize,
+      page,
+      totalCount,
+      items: posts.map(converterToPostValidFormat),
     };
   },
 };

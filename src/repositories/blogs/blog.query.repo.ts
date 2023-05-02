@@ -4,18 +4,13 @@ import { blogsDbCollection } from '../../db/db.collections';
 import { BlogViewModel } from '../../models/blogs.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToBlogValidFormat } from '../../helpers/converterToValidFormatData/converter.blog';
+import { TypeValidQueryParams } from '../../types/req-res.types';
 
 export const blogQueryRepo = {
-  getAllBlogs: async (): Promise<IWithPagination<BlogViewModel>> => {
-    const blogs = await blogsDbCollection.find().toArray();
-
-    return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: blogs.map(blog => converterToBlogValidFormat(blog)),
-    };
+  async getAllBlogs(
+    filter: TypeValidQueryParams
+  ): Promise<IWithPagination<BlogViewModel>> {
+    return this._getBlogs(filter);
   },
 
   getBlogById: async (id: string): Promise<BlogViewModel | null> => {
@@ -24,5 +19,30 @@ export const blogQueryRepo = {
     if (!blog) return null;
 
     return converterToBlogValidFormat(blog);
+  },
+
+  _getBlogs: async (
+    filter: TypeValidQueryParams
+  ): Promise<IWithPagination<BlogViewModel>> => {
+    const { condition, page, pageSize, sortBy, sortDirection } = filter;
+
+    const find = { name: { $regex: condition, $options: 'i' } };
+
+    const blogs = await blogsDbCollection
+      .find(find)
+      .sort(sortBy, sortDirection)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await blogsDbCollection.countDocuments(find);
+
+    return {
+      pagesCount: Math.ceil(totalCount / pageSize),
+      pageSize,
+      page,
+      totalCount,
+      items: blogs.map(converterToBlogValidFormat),
+    };
   },
 };

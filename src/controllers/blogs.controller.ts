@@ -1,12 +1,15 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import { blogService } from '../service/blogs.service';
 import { STATUS_CODE } from '../utils/status.code';
 import { BlogInputModel, BlogViewModel } from '../models/blogs.models';
 import {
+  TypeQueryParams,
   TypeRequestBody,
   TypeRequestParams,
   TypeRequestParamsAndBody,
+  TypeRequestParamsAndQuery,
+  TypeRequestQuery,
 } from '../types/req-res.types';
 
 import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
@@ -14,12 +17,16 @@ import { IWithPagination } from '../types/pagination.interface';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { postService } from '../service/posts.service';
 import { postQueryRepo } from '../repositories/posts/post.query.repo';
+import { requestQueryParamsValidation } from '../helpers/request.query.params.validation';
 
 export const getAllBlogsController = async (
-  req: Request,
+  req: TypeRequestQuery<TypeQueryParams>,
   res: Response<IWithPagination<BlogViewModel>>
 ) => {
-  const blogs = await blogQueryRepo.getAllBlogs();
+  const queryParams = requestQueryParamsValidation(req.query);
+
+  const blogs = await blogQueryRepo.getAllBlogs(queryParams);
+
   return res.status(STATUS_CODE.OK).json(blogs);
 };
 
@@ -35,14 +42,19 @@ export const getBlogByIdController = async (
 };
 
 export const getAllPostsByOneBlogController = async (
-  req: TypeRequestParams<{ blogId: string }>,
+  req: TypeRequestParamsAndQuery<{ blogId: string }, TypeQueryParams>,
   res: Response<IWithPagination<PostViewModel>>
 ) => {
+  const queryParams = requestQueryParamsValidation(req.query);
+
   const blogId = await blogQueryRepo.getBlogById(req.params.blogId);
 
   if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
-  const posts = await postQueryRepo.getAllPosts();
+  const posts = await postQueryRepo.getAllPostsByOneBlog(
+    blogId.id,
+    queryParams
+  );
 
   return res.status(STATUS_CODE.OK).json(posts);
 };

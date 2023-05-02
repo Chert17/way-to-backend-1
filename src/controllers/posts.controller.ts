@@ -1,22 +1,27 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import { postService } from '../service/posts.service';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { STATUS_CODE } from '../utils/status.code';
 import {
+  TypeQueryParams,
   TypeRequestBody,
   TypeRequestParams,
   TypeRequestParamsAndBody,
+  TypeRequestQuery,
 } from '../types/req-res.types';
 
 import { postQueryRepo } from '../repositories/posts/post.query.repo';
 import { IWithPagination } from '../types/pagination.interface';
+import { requestQueryParamsValidation } from '../helpers/request.query.params.validation';
 
 export const getAllPostsController = async (
-  req: Request,
+  req: TypeRequestQuery<TypeQueryParams>,
   res: Response<IWithPagination<PostViewModel>>
 ) => {
-  const posts = await postQueryRepo.getAllPosts();
+  const queryParams = requestQueryParamsValidation(req.query);
+
+  const posts = await postQueryRepo.getAllPosts(queryParams);
 
   return res.status(STATUS_CODE.OK).json(posts);
 };
