@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+
 import { postsDbCollection } from '../../db/db.collections';
 import { IPostDb } from '../../db/db.types';
 import { PostInputModel } from '../../models/posts.models';

@@ -11,6 +11,9 @@ import {
 
 import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
 import { IWithPagination } from '../types/pagination.interface';
+import { PostInputModel, PostViewModel } from '../models/posts.models';
+import { postService } from '../service/posts.service';
+import { postQueryRepo } from '../repositories/posts/post.query.repo';
 
 export const getAllBlogsController = async (
   req: Request,
@@ -31,7 +34,20 @@ export const getBlogByIdController = async (
   return res.status(STATUS_CODE.OK).json(blog);
 };
 
-export const postBlogController = async (
+export const getAllPostsByOneBlogController = async (
+  req: TypeRequestParams<{ blogId: string }>,
+  res: Response<IWithPagination<PostViewModel>>
+) => {
+  const blogId = await blogQueryRepo.getBlogById(req.params.blogId);
+
+  if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  const posts = await postQueryRepo.getAllPosts();
+
+  return res.status(STATUS_CODE.OK).json(posts);
+};
+
+export const createBlogController = async (
   req: TypeRequestBody<BlogInputModel>,
   res: Response<BlogViewModel>
 ) => {
@@ -52,33 +68,31 @@ export const postBlogController = async (
   return res.status(STATUS_CODE.CREATED).json(blog);
 };
 
-//TODO
-// export const postPostByBlogIdController = async (
-//   req: TypeRequestParamsAndBody<{ blogId: string }, BlogPostInputModel>,
-//   res: Response<PostViewModel>
-// ) => {
-//   const { blogId } = req.params;
-//   const { content, shortDescription, title } = req.body;
+export const createPostByBlogIdController = async (
+  req: TypeRequestParamsAndBody<
+    { blogId: string },
+    Omit<PostInputModel, 'blogId'>
+  >,
+  res: Response<PostViewModel>
+) => {
+  const { blogId } = req.params;
+  const { content, shortDescription, title } = req.body;
 
-//   const blog = await blogQueryRepo.getBlogById(blogId);
+  const postId = await postService.createPost({
+    blogId,
+    content,
+    shortDescription,
+    title,
+  });
 
-//   if (!blog) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!postId) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
 
-//   const newPost: IPostDb = {
-//     title,
-//     shortDescription,
-//     content,
-//     blogId: blog.id,
-//     blogName: blog.name,
-//     createdAt: new Date().toISOString(),
-//   };
+  const post = await postQueryRepo.getPostById(postId.toString());
 
-//   const post = await createPost(newPost);
+  if (!post) return res.status(STATUS_CODE.BAD_REQUEST);
 
-//   if (!post) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
-
-//   return res.status(STATUS_CODE.CREATED).json(post);
-// };
+  return res.status(STATUS_CODE.CREATED).json(post);
+};
 
 export const updateBlogController = async (
   req: TypeRequestParamsAndBody<{ id: string }, BlogInputModel>,

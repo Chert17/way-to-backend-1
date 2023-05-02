@@ -32,13 +32,13 @@ export const getPostByIdController = async (
   return res.status(STATUS_CODE.OK).json(post);
 };
 
-export const postPostController = async (
+export const createPostController = async (
   req: TypeRequestBody<PostInputModel>,
   res: Response<PostViewModel>
 ) => {
   const { blogId, content, shortDescription, title } = req.body;
 
-  if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+  if (!blogId) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
 
   const postId = await postService.createPost({
     blogId,

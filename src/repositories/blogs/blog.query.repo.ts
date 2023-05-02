@@ -3,6 +3,7 @@ import { ObjectId } from 'mongodb';
 import { blogsDbCollection } from '../../db/db.collections';
 import { BlogViewModel } from '../../models/blogs.models';
 import { IWithPagination } from '../../types/pagination.interface';
+import { converterToBlogValidFormat } from '../../helpers/converterToValidFormatData/converter.blog';
 
 export const blogQueryRepo = {
   getAllBlogs: async (): Promise<IWithPagination<BlogViewModel>> => {
@@ -13,14 +14,7 @@ export const blogQueryRepo = {
       pageSize: 0,
       page: 0,
       totalCount: 0,
-      items: blogs.map(blog => ({
-        id: blog._id.toString(),
-        name: blog.name,
-        description: blog.description,
-        websiteUrl: blog.websiteUrl,
-        createdAt: blog.createdAt,
-        isMembership: blog.isMembership,
-      })),
+      items: blogs.map(blog => converterToBlogValidFormat(blog)),
     };
   },
 
@@ -29,13 +23,6 @@ export const blogQueryRepo = {
 
     if (!blog) return null;
 
-    return {
-      id: blog._id.toString(),
-      name: blog.name,
-      description: blog.description,
-      websiteUrl: blog.websiteUrl,
-      createdAt: blog.createdAt,
-      isMembership: blog.isMembership,
-    };
+    return converterToBlogValidFormat(blog);
   },
 };

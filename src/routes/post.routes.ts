@@ -1,10 +1,10 @@
 import express from 'express';
 
 import {
+  createPostController,
   deletePostController,
   getAllPostsController,
   getPostByIdController,
-  postPostController,
   updatePostController,
 } from '../controllers/posts.controller';
 
@@ -22,7 +22,7 @@ postRouter.post(
   authMiddleware,
   postRequestBodySchema,
   validateRequestMiddleware,
-  postPostController
+  createPostController
 );
 
 postRouter.put(

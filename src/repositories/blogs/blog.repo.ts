@@ -2,7 +2,7 @@ import { ObjectId } from 'mongodb';
 
 import { blogsDbCollection } from '../../db/db.collections';
 import { IBlogDb } from '../../db/db.types';
-import { BlogInputModel, BlogViewModel } from '../../models/blogs.models';
+import { BlogInputModel } from '../../models/blogs.models';
 
 export const blogRepo = {
   createBlog: async (blog: IBlogDb): Promise<ObjectId | null> => {

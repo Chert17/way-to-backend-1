@@ -1,39 +1,41 @@
 import express from 'express';
 
 import {
+  createBlogController,
+  createPostByBlogIdController,
   deleteBlogController,
   getAllBlogsController,
+  getAllPostsByOneBlogController,
   getBlogByIdController,
-  postBlogController,
   updateBlogController,
 } from '../controllers/blogs.controller';
 
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { blogRequestBodySchema } from '../validation/blog.request.body.schema';
 import { validateRequestMiddleware } from '../middlewares/validateRequestMiddleware';
+import { postRequestBodySchema } from '../validation/posts.request.body.schema';
 
 export const blogRouter = express.Router();
 
 blogRouter.get('/', getAllBlogsController);
 blogRouter.get('/:id', getBlogByIdController);
 
-blogRouter.get('/:blogId/posts');
+blogRouter.get('/:blogId/posts', getAllPostsByOneBlogController);
 
 blogRouter.post(
   '/',
   authMiddleware,
   blogRequestBodySchema,
   validateRequestMiddleware,
-  postBlogController
+  createBlogController
 );
 
-//TODO
-// blogRouter.post(
-//   '/:blogId/posts',
-//   authMiddleware,
-//   postRequestBodySchema,
-//   postPostByBlogIdController
-// );
+blogRouter.post(
+  '/:blogId/posts',
+  authMiddleware,
+  postRequestBodySchema,
+  createPostByBlogIdController
+);
 
 blogRouter.put(
   '/:id',
