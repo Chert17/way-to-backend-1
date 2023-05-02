@@ -9,7 +9,7 @@ import {
 } from '../controllers/posts.controller';
 
 import { authMiddleware } from '../middlewares/authMiddleware';
-import { postRequestBodySchema } from '../validation/posts.request.body.schema';
+import { postRequestBodySchema } from '../validation/posts/posts.request.body.schema';
 import { validateRequestMiddleware } from '../middlewares/validateRequestMiddleware';
 
 export const postRouter = express.Router();

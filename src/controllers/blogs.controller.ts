@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 
 import { blogService } from '../service/blogs.service';
 import { STATUS_CODE } from '../utils/status.code';
@@ -7,6 +7,9 @@ import {
   TypeRequestBody,
   TypeRequestParams,
   TypeRequestParamsAndBody,
+  TypeRequestParamsAndQuery,
+  TypeRequestParamsPagination,
+  TypeRequestQuery,
 } from '../types/req-res.types';
 
 import { blogQueryRepo } from '../repositories/blogs/blog.query.repo';
@@ -14,12 +17,16 @@ import { IWithPagination } from '../types/pagination.interface';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { postService } from '../service/posts.service';
 import { postQueryRepo } from '../repositories/posts/post.query.repo';
+import { paginationRequestQueryValidation } from '../helpers/pagination.request.query.validation';
 
 export const getAllBlogsController = async (
-  req: Request,
+  req: TypeRequestQuery<TypeRequestParamsPagination>,
   res: Response<IWithPagination<BlogViewModel>>
 ) => {
-  const blogs = await blogQueryRepo.getAllBlogs();
+  const paginationData = paginationRequestQueryValidation(req.query);
+
+  const blogs = await blogQueryRepo.getAllBlogs(paginationData);
+
   return res.status(STATUS_CODE.OK).json(blogs);
 };
 
@@ -35,14 +42,22 @@ export const getBlogByIdController = async (
 };
 
 export const getAllPostsByOneBlogController = async (
-  req: TypeRequestParams<{ blogId: string }>,
+  req: TypeRequestParamsAndQuery<
+    { blogId: string },
+    TypeRequestParamsPagination
+  >,
   res: Response<IWithPagination<PostViewModel>>
 ) => {
+  const paginationData = paginationRequestQueryValidation(req.query);
+
   const blogId = await blogQueryRepo.getBlogById(req.params.blogId);
 
   if (!blogId) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
-  const posts = await postQueryRepo.getAllPosts();
+  const posts = await postQueryRepo.getAllPostsByOneBlog(
+    blogId.id,
+    paginationData
+  );
 
   return res.status(STATUS_CODE.OK).json(posts);
 };

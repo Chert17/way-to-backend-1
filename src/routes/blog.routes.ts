@@ -11,9 +11,9 @@ import {
 } from '../controllers/blogs.controller';
 
 import { authMiddleware } from '../middlewares/authMiddleware';
-import { blogRequestBodySchema } from '../validation/blog.request.body.schema';
+import { blogRequestBodySchema } from '../validation/blogs/blog.request.body.schema';
 import { validateRequestMiddleware } from '../middlewares/validateRequestMiddleware';
-import { postRequestBodySchema } from '../validation/posts.request.body.schema';
+import { postRequestBodySchema } from '../validation/posts/posts.request.body.schema';
 
 export const blogRouter = express.Router();
 

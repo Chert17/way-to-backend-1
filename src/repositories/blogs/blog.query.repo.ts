@@ -1,20 +1,39 @@
-import { ObjectId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 
 import { blogsDbCollection } from '../../db/db.collections';
 import { BlogViewModel } from '../../models/blogs.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToBlogValidFormat } from '../../helpers/converterToValidFormatData/converter.blog';
+import { IBlogDb } from '../../db/db.types';
+import { TypeValidRequestQueryParams } from '../../types/req-res.types';
 
 export const blogQueryRepo = {
-  getAllBlogs: async (): Promise<IWithPagination<BlogViewModel>> => {
-    const blogs = await blogsDbCollection.find().toArray();
+  getAllBlogs: async (
+    data: TypeValidRequestQueryParams
+  ): Promise<IWithPagination<BlogViewModel>> => {
+    const { pageNumber, pageSize, searchNameTerm, sortBy, sortDirection } =
+      data;
+
+    const filter: Filter<IBlogDb> = {
+      name: { $regex: searchNameTerm, $options: 'i' },
+    };
+    const blogs = await blogsDbCollection
+      .find(filter)
+      .sort(sortBy, sortDirection)
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await blogsDbCollection.countDocuments(filter);
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
 
     return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: blogs.map(blog => converterToBlogValidFormat(blog)),
+      pagesCount: pagesCount === 0 ? 1 : pagesCount,
+      pageSize: pageSize,
+      page: pageNumber,
+      totalCount,
+      items: blogs.map(converterToBlogValidFormat),
     };
   },
 
@@ -25,4 +44,33 @@ export const blogQueryRepo = {
 
     return converterToBlogValidFormat(blog);
   },
+
+  // _getBlogs: async (
+  //   data: TypeValidRequestQueryParams
+  // ): Promise<IWithPagination<BlogViewModel>> => {
+  //   const { pageNumber, pageSize, searchNameTerm, sortBy, sortDirection } =
+  //     data;
+
+  //   const filter: Filter<IBlogDb> = {
+  //     name: { $regex: searchNameTerm, $options: 'i' },
+  //   };
+  //   const blogs = await blogsDbCollection
+  //     .find(filter)
+  //     .sort(sortBy, sortDirection)
+  //     .skip((pageNumber - 1) * pageSize)
+  //     .limit(pageSize)
+  //     .toArray();
+
+  //   const totalCount = await blogsDbCollection.countDocuments(filter);
+
+  //   const pagesCount = Math.ceil(totalCount / pageSize);
+
+  //   return {
+  //     pagesCount: pagesCount === 0 ? 1 : pagesCount,
+  //     pageSize: pageSize,
+  //     page: pageNumber,
+  //     totalCount,
+  //     items: blogs.map(converterToBlogValidFormat),
+  //   };
+  // },
 };

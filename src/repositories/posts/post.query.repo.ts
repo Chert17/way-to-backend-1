@@ -1,20 +1,39 @@
-import { ObjectId } from 'mongodb';
+import { Filter, ObjectId } from 'mongodb';
 
 import { postsDbCollection } from '../../db/db.collections';
 import { PostViewModel } from '../../models/posts.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToPostValidFormat } from '../../helpers/converterToValidFormatData/converter.post';
+import { IPostDb } from '../../db/db.types';
+import { TypeValidRequestQueryParams } from '../../types/req-res.types';
 
 export const postQueryRepo = {
-  getAllPosts: async (): Promise<IWithPagination<PostViewModel>> => {
-    const posts = await postsDbCollection.find().toArray();
+  getAllPosts: async (
+    data: TypeValidRequestQueryParams
+  ): Promise<IWithPagination<PostViewModel>> => {
+    const { pageNumber, pageSize, searchNameTerm, sortBy, sortDirection } =
+      data;
+
+    const filter: Filter<IPostDb> = {
+      name: { $regex: searchNameTerm, $options: 'i' },
+    };
+    const posts = await postsDbCollection
+      .find(filter)
+      .sort(sortBy, sortDirection)
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await postsDbCollection.countDocuments(filter);
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
 
     return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: posts.map(post => converterToPostValidFormat(post)),
+      pagesCount: pagesCount === 0 ? 1 : pagesCount,
+      pageSize: pageSize,
+      page: pageNumber,
+      totalCount,
+      items: posts.map(converterToPostValidFormat),
     };
   },
 
@@ -27,16 +46,32 @@ export const postQueryRepo = {
   },
 
   getAllPostsByOneBlog: async (
-    blogId: string
+    blogId: string,
+    data: Omit<TypeValidRequestQueryParams, 'searchNameTerm'>
   ): Promise<IWithPagination<PostViewModel>> => {
-    const posts = await postsDbCollection.find({ blogId: blogId }).toArray();
+    const { pageNumber, pageSize, sortBy, sortDirection } = data;
+
+    const filter: Filter<IPostDb> = {
+      name: { $regex: blogId, $options: 'i' },
+    };
+
+    const posts = await postsDbCollection
+      .find(filter)
+      .sort(sortBy, sortDirection)
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .toArray();
+
+    const totalCount = await postsDbCollection.countDocuments(filter);
+
+    const pagesCount = Math.ceil(totalCount / pageSize);
 
     return {
-      pagesCount: 0,
-      pageSize: 0,
-      page: 0,
-      totalCount: 0,
-      items: posts.map(post => converterToPostValidFormat(post)),
+      pagesCount: pagesCount === 0 ? 1 : pagesCount,
+      pageSize: pageSize,
+      page: pageNumber,
+      totalCount,
+      items: posts.map(converterToPostValidFormat),
     };
   },
 };
