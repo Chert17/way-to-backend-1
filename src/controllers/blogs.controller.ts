@@ -4,7 +4,7 @@ import { blogService } from '../service/blogs.service';
 import { STATUS_CODE } from '../utils/status.code';
 import { BlogInputModel, BlogViewModel } from '../models/blogs.models';
 import {
-  TypeQueryParams,
+  PaginationQueryParams,
   TypeRequestBody,
   TypeRequestParams,
   TypeRequestParamsAndBody,
@@ -17,15 +17,20 @@ import { IWithPagination } from '../types/pagination.interface';
 import { PostInputModel, PostViewModel } from '../models/posts.models';
 import { postService } from '../service/posts.service';
 import { postQueryRepo } from '../repositories/posts/post.query.repo';
-import { requestQueryParamsValidation } from '../helpers/request.query.params.validation';
+import { paginationQueryParamsValidation } from '../helpers/request.query.params.validation';
+import { requestConditionValidation } from '../helpers/request.query.condition.validation';
 
 export const getAllBlogsController = async (
-  req: TypeRequestQuery<TypeQueryParams>,
+  req: TypeRequestQuery<PaginationQueryParams & { searchNameTerm: string }>,
   res: Response<IWithPagination<BlogViewModel>>
 ) => {
-  const queryParams = requestQueryParamsValidation(req.query);
+  const { searchNameTerm } = req.query;
 
-  const blogs = await blogQueryRepo.getAllBlogs(queryParams);
+  const queryParams = paginationQueryParamsValidation(req.query);
+
+  const condition = requestConditionValidation(searchNameTerm, '');
+
+  const blogs = await blogQueryRepo.getAllBlogs(condition, queryParams);
 
   return res.status(STATUS_CODE.OK).json(blogs);
 };
@@ -42,10 +47,10 @@ export const getBlogByIdController = async (
 };
 
 export const getAllPostsByOneBlogController = async (
-  req: TypeRequestParamsAndQuery<{ blogId: string }, TypeQueryParams>,
+  req: TypeRequestParamsAndQuery<{ blogId: string }, PaginationQueryParams>,
   res: Response<IWithPagination<PostViewModel>>
 ) => {
-  const queryParams = requestQueryParamsValidation(req.query);
+  const queryParams = paginationQueryParamsValidation(req.query);
 
   const blogId = await blogQueryRepo.getBlogById(req.params.blogId);
 

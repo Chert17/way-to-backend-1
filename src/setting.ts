@@ -8,6 +8,7 @@ import { blogsDbCollection, postsDbCollection } from './db/db.collections';
 
 import { blogRouter } from './routes/blog.routes';
 import { postRouter } from './routes/post.routes';
+import { userRouter } from './routes/user.routes';
 
 export const app = express();
 
@@ -23,6 +24,7 @@ app.delete('/testing/all-data', (req: Request, res: Response) => {
 app.use('/videos', videoRouter);
 app.use('/blogs', blogRouter);
 app.use('/posts', postRouter);
+app.use('/users', userRouter);
 
 app.use((req: Request, res: Response) => {
   return res.status(STATUS_CODE.NOT_FOUND).json({ message: 'Not found' });

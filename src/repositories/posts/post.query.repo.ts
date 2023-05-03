@@ -4,13 +4,14 @@ import { postsDbCollection } from '../../db/db.collections';
 import { PostViewModel } from '../../models/posts.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToPostValidFormat } from '../../helpers/converterToValidFormatData/converter.post';
-import { TypeValidQueryParams } from '../../types/req-res.types';
+import { ValidPaginationQueryParams } from '../../types/req-res.types';
 
 export const postQueryRepo = {
   async getAllPosts(
-    filter: TypeValidQueryParams
+    // condition: string,
+    pagination: ValidPaginationQueryParams
   ): Promise<IWithPagination<PostViewModel>> {
-    return this._getPosts({ ...filter, condition: '' });
+    return this._getPosts({ ...pagination, condition: '' });
   },
 
   getPostById: async (id: string): Promise<PostViewModel | null> => {
@@ -23,13 +24,13 @@ export const postQueryRepo = {
 
   async getAllPostsByOneBlog(
     blogId: string,
-    filter: TypeValidQueryParams
+    pagination: ValidPaginationQueryParams
   ): Promise<IWithPagination<PostViewModel>> {
-    return await this._getPosts({ ...filter, condition: blogId });
+    return await this._getPosts({ ...pagination, condition: blogId });
   },
 
   _getPosts: async (
-    filter: TypeValidQueryParams
+    filter: ValidPaginationQueryParams & { condition: string }
   ): Promise<IWithPagination<PostViewModel>> => {
     const { condition, page, pageSize, sortBy, sortDirection } = filter;
 

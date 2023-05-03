@@ -4,13 +4,14 @@ import { blogsDbCollection } from '../../db/db.collections';
 import { BlogViewModel } from '../../models/blogs.models';
 import { IWithPagination } from '../../types/pagination.interface';
 import { converterToBlogValidFormat } from '../../helpers/converterToValidFormatData/converter.blog';
-import { TypeValidQueryParams } from '../../types/req-res.types';
+import { ValidPaginationQueryParams } from '../../types/req-res.types';
 
 export const blogQueryRepo = {
   async getAllBlogs(
-    filter: TypeValidQueryParams
+    condition: string,
+    pagination: ValidPaginationQueryParams
   ): Promise<IWithPagination<BlogViewModel>> {
-    return this._getBlogs(filter);
+    return this._getBlogs({ ...pagination, condition });
   },
 
   getBlogById: async (id: string): Promise<BlogViewModel | null> => {
@@ -22,7 +23,7 @@ export const blogQueryRepo = {
   },
 
   _getBlogs: async (
-    filter: TypeValidQueryParams
+    filter: ValidPaginationQueryParams & { condition: string }
   ): Promise<IWithPagination<BlogViewModel>> => {
     const { condition, page, pageSize, sortBy, sortDirection } = filter;
 
