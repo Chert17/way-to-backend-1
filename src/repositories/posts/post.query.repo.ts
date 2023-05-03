@@ -46,8 +46,10 @@ export const postQueryRepo = {
 
     const totalCount = await postsDbCollection.countDocuments(find);
 
+    const pageCount = Math.ceil(totalCount / pageSize);
+
     return {
-      pagesCount: Math.ceil(totalCount / pageSize),
+      pagesCount: pageCount === 0 ? 1 : pageCount,
       pageSize,
       page,
       totalCount,
