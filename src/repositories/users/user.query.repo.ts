@@ -50,7 +50,7 @@ export const userQueryRepo = {
     if (login) query.push({ login: { $regex: login, $options: 'i' } });
 
     const find = {
-      $or: query,
+      $or: query.length ? query : [{}],
     };
 
     const users = await usersDbCollection
