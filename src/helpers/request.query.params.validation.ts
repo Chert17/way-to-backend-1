@@ -1,22 +1,19 @@
-import { TypeQueryParams, TypeValidQueryParams } from '../types/req-res.types';
+import {
+  PaginationQueryParams,
+  ValidPaginationQueryParams,
+} from '../types/req-res.types';
 
-export const requestQueryParamsValidation = (
-  params: TypeQueryParams
-): TypeValidQueryParams => {
-  const { pageNumber, pageSize, searchNameTerm, sortBy, sortDirection } =
-    params;
+export const paginationQueryParamsValidation = (
+  params: PaginationQueryParams
+): ValidPaginationQueryParams => {
+  const { pageNumber, pageSize, sortBy, sortDirection } = params;
 
-  const validParams: TypeValidQueryParams = {
-    condition: '',
+  const validParams: ValidPaginationQueryParams = {
     sortBy: 'createdAt',
     sortDirection: 'desc',
     page: 1,
     pageSize: 10,
   };
-
-  if (searchNameTerm && searchNameTerm.trim()) {
-    validParams.condition = searchNameTerm;
-  }
 
   if (sortBy && sortBy.trim()) {
     validParams.sortBy = sortBy;
@@ -36,26 +33,3 @@ export const requestQueryParamsValidation = (
 
   return validParams;
 };
-
-// import { TypeQueryParams, TypeValidQueryParams } from '../types/req-res.types';
-
-// export const requestQueryParamsValidation = (
-//   params: TypeQueryParams
-// ): TypeValidQueryParams => {
-//   const page =
-//     typeof params.pageNumber === 'string' ? parseInt(params.pageNumber) : 1;
-
-//   const pageSize =
-//     typeof params.pageSize === 'string' ? parseInt(params.pageSize) : 10;
-
-//   const condition =
-//     typeof params.searchNameTerm === 'string' ? params.searchNameTerm : '';
-
-//   const sortBy =
-//     typeof params.sortBy === 'string' ? params.sortBy : 'createdAt';
-
-//   const sortDirection =
-//     typeof params.sortDirection === 'string' ? params.sortDirection : 'desc';
-
-//   return { page, pageSize, condition, sortBy, sortDirection };
-// };

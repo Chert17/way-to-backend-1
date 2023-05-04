@@ -6,16 +6,14 @@ export type TypeRequestParams<T> = Request<T>;
 export type TypeRequestQuery<T> = Request<{}, {}, {}, T>;
 export type TypeRequestParamsAndQuery<T, B> = Request<T, {}, {}, B>;
 
-export type TypeQueryParams = {
-  searchNameTerm?: string;
+export type PaginationQueryParams = {
   sortBy?: string;
   sortDirection?: 'asc' | 'desc';
   pageNumber?: string;
   pageSize?: string;
 };
 
-export type TypeValidQueryParams = {
-  condition: string;
+export type ValidPaginationQueryParams = {
   sortBy: string;
   sortDirection: 'asc' | 'desc';
   page: number;

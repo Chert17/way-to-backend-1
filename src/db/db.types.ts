@@ -6,6 +6,7 @@ export interface IBlogDb {
   createdAt: string;
   isMembership: boolean;
 }
+
 export interface IPostDb {
   // _id: ObjectId;
   title: string;
@@ -13,5 +14,13 @@ export interface IPostDb {
   content: string;
   blogId: string;
   blogName: string;
+  createdAt: string;
+}
+
+export interface IUserDb {
+  login: string;
+  email: string;
+  passwordHash: string;
+  passwordSalt: string;
   createdAt: string;
 }
