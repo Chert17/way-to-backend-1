@@ -44,7 +44,12 @@ export const userQueryRepo = {
   ): Promise<IWithPagination<UserViewModel>> => {
     const { email, login, page, pageSize, sortBy, sortDirection } = filter;
 
-    const find = email || login ? { $or: [{ email }, { login }] } : {};
+    const query: Record<string, unknown> = {};
+    if (email) query.email = { $regex: email, $options: 'i' };
+
+    if (login) query.login = { $regex: login, $options: 'i' };
+
+    const find = { $or: [query] };
 
     const users = await usersDbCollection
       .find(find)
