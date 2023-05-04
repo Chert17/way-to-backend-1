@@ -20,5 +20,7 @@ export interface IPostDb {
 export interface IUserDb {
   login: string;
   email: string;
+  passwordHash: string;
+  passwordSalt: string;
   createdAt: string;
 }
