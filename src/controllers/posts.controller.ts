@@ -47,9 +47,13 @@ export const getAllCommentsByOnePostController = async (
 ) => {
   const { postId } = req.params;
 
+  const post = await postQueryRepo.getPostById(postId);
+
+  if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
   const queryParams = paginationQueryParamsValidation(req.query);
 
-  const comments = await commentQueryRepo.getAllComments(postId, queryParams);
+  const comments = await commentQueryRepo.getAllComments(post.id, queryParams);
 
   return res.status(STATUS_CODE.OK).json(comments);
 };

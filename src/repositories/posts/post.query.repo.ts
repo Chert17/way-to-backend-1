@@ -15,6 +15,8 @@ export const postQueryRepo = {
   },
 
   getPostById: async (id: string): Promise<PostViewModel | null> => {
+    if (!ObjectId.isValid(id)) return null;
+
     const post = await postsDbCollection.findOne({ _id: new ObjectId(id) });
 
     if (!post) return null;

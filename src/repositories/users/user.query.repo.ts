@@ -18,6 +18,8 @@ export const userQueryRepo = {
   },
 
   getUserById: async (id: string): Promise<UserViewModel | null> => {
+    if (!ObjectId.isValid(id)) return null;
+
     const user = await usersDbCollection.findOne({ _id: new ObjectId(id) });
 
     if (!user) return null;

@@ -15,6 +15,8 @@ export const blogQueryRepo = {
   },
 
   getBlogById: async (id: string): Promise<BlogViewModel | null> => {
+    if (!ObjectId.isValid(id)) return null;
+
     const blog = await blogsDbCollection.findOne({ _id: new ObjectId(id) });
 
     if (!blog) return null;

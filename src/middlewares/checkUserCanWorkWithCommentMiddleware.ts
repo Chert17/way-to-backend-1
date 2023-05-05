@@ -8,11 +8,7 @@ export const checkUserCanWorkWithCommentMiddleware = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('ID', req.params.commentId);
-
   const comment = await commentQueryRepo.getCommentById(req.params.commentId);
-
-  console.log('COMMENT :', comment);
 
   if (!comment) {
     res.sendStatus(STATUS_CODE.NOT_FOUND);
