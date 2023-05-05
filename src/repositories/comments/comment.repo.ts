@@ -16,6 +16,8 @@ export const commentRepo = {
     commentId: string,
     content: string
   ): Promise<boolean> => {
+    if (!ObjectId.isValid(commentId)) return false;
+
     const result = await commentsDbCollection.findOneAndUpdate(
       { _id: new ObjectId(commentId) },
       { $set: { content } },
@@ -26,6 +28,8 @@ export const commentRepo = {
   },
 
   deleteComment: async (commentId: string): Promise<boolean> => {
+    if (!ObjectId.isValid(commentId)) return false;
+
     const result = await commentsDbCollection.findOneAndDelete({
       _id: new ObjectId(commentId),
     });

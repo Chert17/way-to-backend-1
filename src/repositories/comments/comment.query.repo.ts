@@ -36,6 +36,8 @@ export const commentQueryRepo = {
   },
 
   getCommentById: async (id: string): Promise<CommentViewModel | null> => {
+    if (!ObjectId.isValid(id)) return null;
+
     const comment = await commentsDbCollection.findOne({
       _id: new ObjectId(id),
     });

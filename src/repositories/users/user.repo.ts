@@ -12,6 +12,8 @@ export const userRepo = {
   },
 
   deleteUser: async (id: string): Promise<boolean> => {
+    if (!ObjectId.isValid(id)) return false;
+
     const result = await usersDbCollection.findOneAndDelete({
       _id: new ObjectId(id),
     });

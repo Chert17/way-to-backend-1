@@ -18,6 +18,8 @@ export const blogRepo = {
   ): Promise<boolean> => {
     const { name, description, websiteUrl, id } = blog;
 
+    if (!ObjectId.isValid(id)) return false;
+
     const result = await blogsDbCollection.findOneAndUpdate(
       { _id: new ObjectId(id) },
       { $set: { name, description, websiteUrl } },
@@ -28,6 +30,8 @@ export const blogRepo = {
   },
 
   deleteBlog: async (id: string): Promise<boolean> => {
+    if (!ObjectId.isValid(id)) return false;
+
     const result = await blogsDbCollection.findOneAndDelete({
       _id: new ObjectId(id),
     });
