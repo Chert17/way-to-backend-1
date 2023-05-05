@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express';
 
 import {
   blogsDbCollection,
+  commentsDbCollection,
   postsDbCollection,
   usersDbCollection,
 } from '../db/db.collections';
@@ -15,5 +16,6 @@ testingRouter.delete('/', (req: Request, res: Response) => {
   blogsDbCollection.deleteMany();
   postsDbCollection.deleteMany();
   usersDbCollection.deleteMany();
+  commentsDbCollection.deleteMany();
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 });

@@ -8,12 +8,16 @@ import {
   TypeRequestBody,
   TypeRequestParams,
   TypeRequestParamsAndBody,
+  TypeRequestParamsAndQuery,
   TypeRequestQuery,
 } from '../types/req-res.types';
 
 import { postQueryRepo } from '../repositories/posts/post.query.repo';
 import { IWithPagination } from '../types/pagination.interface';
 import { paginationQueryParamsValidation } from '../helpers/request.query.params.validation';
+import { CommentInputModel, CommentViewModel } from '../models/comments.models';
+import { commentQueryRepo } from '../repositories/comments/comment.query.repo';
+import { commentService } from '../service/comments.service';
 
 export const getAllPostsController = async (
   req: TypeRequestQuery<PaginationQueryParams>,
@@ -35,6 +39,19 @@ export const getPostByIdController = async (
   if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
 
   return res.status(STATUS_CODE.OK).json(post);
+};
+
+export const getAllCommentsByOnePostController = async (
+  req: TypeRequestParamsAndQuery<{ postId: string }, PaginationQueryParams>,
+  res: Response<IWithPagination<CommentViewModel>>
+) => {
+  const { postId } = req.params;
+
+  const queryParams = paginationQueryParamsValidation(req.query);
+
+  const comments = await commentQueryRepo.getAllComments(postId, queryParams);
+
+  return res.status(STATUS_CODE.OK).json(comments);
 };
 
 export const createPostController = async (
@@ -59,6 +76,32 @@ export const createPostController = async (
   if (!post) return res.status(STATUS_CODE.BAD_REQUEST);
 
   return res.status(STATUS_CODE.CREATED).json(post);
+};
+
+export const createCommentByPostIdController = async (
+  req: TypeRequestParamsAndBody<{ postId: string }, CommentInputModel>,
+  res: Response<CommentViewModel>
+) => {
+  const { content } = req.body;
+
+  const post = await postQueryRepo.getPostById(req.params.postId);
+
+  if (!post) return res.sendStatus(STATUS_CODE.NOT_FOUND);
+
+  const commentId = await commentService.createComment(
+    content,
+    post.id,
+    post.title,
+    req.userId!
+  );
+
+  if (!commentId) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+
+  const comment = await commentQueryRepo.getCommentById(commentId.toString());
+
+  if (!comment) return res.sendStatus(STATUS_CODE.BAD_REQUEST);
+
+  return res.status(STATUS_CODE.CREATED).json(comment);
 };
 
 export const updatePostController = async (
