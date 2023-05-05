@@ -21,7 +21,7 @@ authgRouter.post(
 
     const user = await userService.checkCredentials(loginOrEmail, password);
 
-    if (!user) return res.sendStatus(STATUS_CODE.Unauthorized);
+    if (!user) return res.sendStatus(STATUS_CODE.UNAUTHORIZED);
 
     const accessToken = await jwtService.createJWT(user._id);
 

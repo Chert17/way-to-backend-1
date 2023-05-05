@@ -1,3 +1,5 @@
+import { CommentatorInfo } from '../models/comments.models';
+
 export interface IBlogDb {
   // _id: ObjectId;
   name: string;
@@ -22,5 +24,13 @@ export interface IUserDb {
   email: string;
   passwordHash: string;
   passwordSalt: string;
+  createdAt: string;
+}
+
+export interface ICommentsDb {
+  content: string;
+  postId: string;
+  postTitle: string;
+  commentatorInfo: CommentatorInfo;
   createdAt: string;
 }

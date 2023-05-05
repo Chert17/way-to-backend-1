@@ -11,21 +11,21 @@ export const jwtAuthMiddleware = async (
   const reqAuth = req.headers.authorization;
 
   if (!reqAuth) {
-    res.sendStatus(STATUS_CODE.Unauthorized);
+    res.sendStatus(STATUS_CODE.UNAUTHORIZED);
     return;
   }
 
   const [atuhType, token] = reqAuth.split(' ');
 
   if (atuhType !== 'Bearer') {
-    res.sendStatus(STATUS_CODE.Unauthorized);
+    res.sendStatus(STATUS_CODE.UNAUTHORIZED);
     return;
   }
 
   const userId = await jwtService.getUSerIdByToken(token);
 
   if (!userId) {
-    res.sendStatus(STATUS_CODE.Unauthorized);
+    res.sendStatus(STATUS_CODE.UNAUTHORIZED);
     return;
   }
 

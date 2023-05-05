@@ -10,7 +10,7 @@ export const authMiddleware = (
   const correctAuth = `Basic ${encode}`;
 
   if (req.headers.authorization !== correctAuth) {
-    res.sendStatus(STATUS_CODE.Unauthorized);
+    res.sendStatus(STATUS_CODE.UNAUTHORIZED);
     return;
   }
 
