@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { genSalt } from 'bcrypt';
 
 import { IUserDb } from '../db/db.types';
@@ -34,7 +34,7 @@ export const userService = {
   checkCredentials: async (
     loginOrEmail: string,
     password: string
-  ): Promise<true | null> => {
+  ): Promise<WithId<IUserDb> | null> => {
     const user = await userQueryRepo.checkUserCredentials(loginOrEmail);
 
     if (!user) return null;
@@ -43,6 +43,6 @@ export const userService = {
 
     if (passwordHash !== user.passwordHash) return null;
 
-    return true;
+    return user;
   },
 };
