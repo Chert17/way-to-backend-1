@@ -11,4 +11,25 @@ export const commentRepo = {
 
     return result.insertedId;
   },
+
+  updateComment: async (
+    commentId: string,
+    content: string
+  ): Promise<boolean> => {
+    const result = await commentsDbCollection.findOneAndUpdate(
+      { _id: new ObjectId(commentId) },
+      { $set: { content } },
+      { returnDocument: 'after' }
+    );
+
+    return !!result.value;
+  },
+
+  deleteComment: async (commentId: string): Promise<boolean> => {
+    const result = await commentsDbCollection.findOneAndDelete({
+      _id: new ObjectId(commentId),
+    });
+
+    return !!result.value;
+  },
 };

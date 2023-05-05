@@ -25,4 +25,15 @@ export const commentService = {
 
     return await commentRepo.createComment(newComment);
   },
+
+  updateComment: async (
+    commentId: string,
+    content: string
+  ): Promise<boolean> => {
+    return await commentRepo.updateComment(commentId, content);
+  },
+
+  deleteComment: async (commentId: string): Promise<boolean> => {
+    return await commentRepo.deleteComment(commentId);
+  },
 };
