@@ -3,9 +3,12 @@ import { ObjectId, WithId } from 'mongodb';
 import { IWithPagination } from '../../types/pagination.interface';
 import { ValidPaginationQueryParams } from '../../types/req-res.types';
 import { UserViewModel } from '../../models/users.models';
-import { usersDbCollection } from '../../db/db.collections';
+import {
+  emailConfirmationByUserDbCollection,
+  usersDbCollection,
+} from '../../db/db.collections';
 import { converterToUserValidFormat } from '../../helpers/converterToValidFormatData/converter.user';
-import { IUserDb } from '../../db/db.types';
+import { IEmailConfirmByUserDb, IUserDb } from '../../db/db.types';
 
 export const userQueryRepo = {
   async getAllUsers(
@@ -37,6 +40,30 @@ export const userQueryRepo = {
     if (!user) return null;
 
     return user;
+  },
+
+  getEmailConfirmationCode: async (
+    confirmationCode: string
+  ): Promise<WithId<IEmailConfirmByUserDb> | null> => {
+    const code = await emailConfirmationByUserDbCollection.findOne({
+      confirmationCode,
+    });
+
+    if (!code) return null;
+
+    return code;
+  },
+
+  getEmailConfirmationByUserId: async (
+    userId: string
+  ): Promise<WithId<IEmailConfirmByUserDb> | null> => {
+    const result = await emailConfirmationByUserDbCollection.findOne({
+      userId,
+    });
+
+    if (!result) return null;
+
+    return result;
   },
 
   _getUsers: async (

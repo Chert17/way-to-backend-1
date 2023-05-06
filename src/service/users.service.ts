@@ -22,6 +22,7 @@ export const userService = {
       passwordHash,
       passwordSalt,
       createdAt: new Date().toISOString(),
+      isConfirm: true,
     };
 
     return await userRepo.createUser(newUser);

@@ -8,3 +8,9 @@ export type MeViewMOdel = {
   login: string;
   userId: string;
 };
+
+export type RegisterInputModel = {
+  login: string;
+  email: string;
+  password: string;
+};

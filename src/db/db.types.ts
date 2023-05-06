@@ -25,6 +25,14 @@ export interface IUserDb {
   passwordHash: string;
   passwordSalt: string;
   createdAt: string;
+  isConfirm?: boolean;
+}
+
+export interface IEmailConfirmByUserDb {
+  userId: string;
+  confirmationCode: string;
+  expirationDate: Date;
+  isConfirm: boolean;
 }
 
 export interface ICommentsDb {
