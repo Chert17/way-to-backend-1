@@ -56,11 +56,24 @@ export const registrationController = async (
 ) => {
   const { email, login, password } = req.body;
 
-  const isAlreadyuser = await userService.checkCredentials(email, password);
+  const isAlreadyUserByEmail = await userService.checkCredentials(
+    email,
+    password
+  );
+  const isAlreadyUserByLogin = await userService.checkCredentials(
+    login,
+    password
+  );
 
-  if (isAlreadyuser) {
+  if (isAlreadyUserByEmail) {
     return res.status(STATUS_CODE.BAD_REQUEST).json({
       errorsMessages: [{ message: 'Inccorect field', field: 'email' }],
+    });
+  }
+
+  if (isAlreadyUserByLogin) {
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      errorsMessages: [{ message: 'Inccorect field', field: 'login' }],
     });
   }
 
