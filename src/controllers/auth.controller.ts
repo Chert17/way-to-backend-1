@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { v4 as uuidv4 } from 'uuid';
 
 import { jwtService } from '../application/jwt.service';
 import { MeViewMOdel, RegisterInputModel } from '../models/auth.models';
@@ -8,6 +9,7 @@ import { userService } from '../service/users.service';
 import { TypeRequestBody } from '../types/req-res.types';
 import { STATUS_CODE } from '../utils/status.code';
 import { authService } from '../service/auth.service';
+import { userRepo } from '../repositories/users/user.repo';
 
 export const loginController = async (
   req: TypeRequestBody<LoginInputModel>,
@@ -138,9 +140,16 @@ export const emailResendingController = async (
     }); // user already confirmed
   }
 
+  const newCode = await userRepo.updateConfirmCodeByUser(
+    user._id.toString(),
+    uuidv4()
+  );
+
+  if (!newCode) return res.sendStatus(STATUS_CODE.BAD_REQUEST); // failed to update code
+
   const resultMessage = await authService.sendEmail(
     user.email,
-    emailConfirmCode.confirmationCode
+    newCode.confirmationCode
   );
 
   if (!resultMessage) return res.sendStatus(STATUS_CODE.BAD_REQUEST); // message not sent , need repeat
