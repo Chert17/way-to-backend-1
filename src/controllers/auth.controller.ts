@@ -111,6 +111,12 @@ export const emailResendingController = async (
 
   if (!emailConfirmCode) return res.sendStatus(STATUS_CODE.BAD_REQUEST); // code not found by this user
 
+  if (emailConfirmCode.isConfirm === true) {
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      errorsMessages: [{ message: 'Inncorect field', field: 'email' }],
+    }); // user already confirmed
+  }
+
   const resultMessage = await authService.sendEmail(
     user.email,
     emailConfirmCode.confirmationCode
