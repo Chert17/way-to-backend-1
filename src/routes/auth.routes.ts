@@ -13,7 +13,7 @@ import {
 } from '../controllers/auth.controller';
 import { authRegisterRequestBodySchema } from '../validation/auth_login/auth.register.request.body.schema';
 import { authRegisterConfirmRequestBodySchema } from '../validation/auth_login/auth.register.confirm.request.body.schema';
-import { emailResendingRequestBodySchema } from '../validation/auth_login/email.resending.request.body.schema';
+import { emailSchema } from '../validation/common/email.schema';
 
 export const authgRouter = Router();
 
@@ -42,7 +42,7 @@ authgRouter.post(
 
 authgRouter.post(
   '/registration-email-resending',
-  emailResendingRequestBodySchema,
+  emailSchema,
   validateRequestMiddleware,
   emailResendingController
 );
