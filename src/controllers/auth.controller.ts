@@ -56,6 +56,14 @@ export const registrationController = async (
 ) => {
   const { email, login, password } = req.body;
 
+  const isAlreadyuser = await userService.checkCredentials(email, password);
+
+  if (isAlreadyuser) {
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      errorsMessages: [{ message: 'Inccorect field', field: 'email' }],
+    });
+  }
+
   const userId = await userService.createUser({ email, login, password });
 
   if (!userId) return res.sendStatus(STATUS_CODE.BAD_REQUEST); // not created user
