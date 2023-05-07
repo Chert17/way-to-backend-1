@@ -1,4 +1,5 @@
 import { body } from 'express-validator';
+import { passwordSchema } from '../common/password.schema';
 
 export const authLoginRequestBodySchema = [
   body('loginOrEmail')
@@ -8,10 +9,5 @@ export const authLoginRequestBodySchema = [
     .isString()
     .withMessage('Field is required'),
 
-  body('password')
-    .exists({ values: 'falsy' })
-    .trim()
-    .notEmpty()
-    .isString()
-    .withMessage('Field is required'),
+  passwordSchema,
 ];
