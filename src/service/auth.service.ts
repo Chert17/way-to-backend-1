@@ -19,7 +19,7 @@ export const authService = {
     const emailConfirmation: IEmailConfirmByUserDb = {
       userId,
       confirmationCode: uuidv4(),
-      expirationDate: add(new Date(), { hours: 1, minutes: 2 }),
+      expirationDate: add(new Date(), { seconds: 30 }),
       isConfirm: false,
     };
 
