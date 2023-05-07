@@ -1,5 +1,5 @@
 import { add } from 'date-fns';
-import uuid from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { IEmailConfirmByUserDb } from '../db/db.types';
 import { emailManager } from '../managers/email.managers';
@@ -18,7 +18,7 @@ export const authService = {
   emailConfirmationByUser: async (userId: string): Promise<string | null> => {
     const emailConfirmation: IEmailConfirmByUserDb = {
       userId,
-      confirmationCode: uuid.v4(),
+      confirmationCode: uuidv4(),
       expirationDate: add(new Date(), { hours: 1, minutes: 2 }),
       isConfirm: false,
     };
