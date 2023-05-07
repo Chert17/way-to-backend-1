@@ -34,7 +34,9 @@ export const authService = {
     const result = await userQueryRepo.getEmailConfirmationCode(code);
 
     if (!result) return null; //codes not match
-    if (result.isConfirm) return null; // user has already been verified
+
+    if (result.isConfirm === true) return null; // user has already been verified
+
     if (result.expirationDate < new Date()) {
       await userRepo.deleteUser(result.userId);
       await userRepo.deleteEmailConfirmByUser(result._id.toString());

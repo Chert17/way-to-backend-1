@@ -85,7 +85,10 @@ export const registerationConfirmationController = async (
 ) => {
   const result = await authService.checkConfirmEmail(req.body.code);
 
-  if (!result) return res.sendStatus(STATUS_CODE.BAD_REQUEST); // codes not match
+  if (!result)
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      errorsMessages: [{ message: 'Inncorect field', field: 'code' }],
+    }); // codes not match
 
   return res.sendStatus(STATUS_CODE.NOT_CONTENT);
 };
@@ -96,7 +99,11 @@ export const emailResendingController = async (
 ) => {
   const user = await userQueryRepo.checkUserCredentials(req.body.email);
 
-  if (!user) return res.sendStatus(STATUS_CODE.NOT_FOUND); // user not found
+  if (!user) {
+    return res.status(STATUS_CODE.BAD_REQUEST).json({
+      errorsMessages: [{ message: 'Inncorect field', field: 'email' }],
+    }); // user not found
+  }
 
   const emailConfirmCode = await userQueryRepo.getEmailConfirmationByUserId(
     user._id.toString()
