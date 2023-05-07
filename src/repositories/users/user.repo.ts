@@ -1,4 +1,4 @@
-import { ObjectId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import {
   emailConfirmationByUserDbCollection,
   usersDbCollection,
@@ -48,6 +48,21 @@ export const userRepo = {
     });
 
     return !!result.value;
+  },
+
+  updateConfirmCodeByUser: async (
+    userId: string,
+    newCode: string
+  ): Promise<WithId<IEmailConfirmByUserDb> | null> => {
+    if (!ObjectId.isValid(userId)) return null;
+
+    const result = await emailConfirmationByUserDbCollection.findOneAndUpdate(
+      { userId },
+      { $set: { confirmationCode: newCode } },
+      { returnDocument: 'after' }
+    );
+
+    return result.value;
   },
 
   deleteUser: async (id: string): Promise<boolean> => {

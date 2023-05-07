@@ -19,7 +19,7 @@ export const authService = {
     const emailConfirmation: IEmailConfirmByUserDb = {
       userId,
       confirmationCode: uuidv4(),
-      expirationDate: add(new Date(), { seconds: 30 }),
+      expirationDate: add(new Date(), { minutes: 2 }),
       isConfirm: false,
     };
 
@@ -38,7 +38,6 @@ export const authService = {
     if (result.isConfirm === true) return null; // user has already been verified
 
     if (result.expirationDate < new Date()) {
-      await userRepo.deleteUser(result.userId);
       await userRepo.deleteEmailConfirmByUser(result._id.toString());
       return null; // expirationDate limit exhausted
     }
